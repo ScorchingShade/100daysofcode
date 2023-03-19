@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const app = express();
 
-// Data model
+// Data model because database clusters stay on forever and get you broke ( also I hate sqlite )
 const users = [];
 const items = [];
 const carts = [];
@@ -21,6 +21,9 @@ function generateToken(user) {
 
 // Helper function to authenticate requests
 function authenticate(req, res, next) {
+  if(!req.headers.authorization){
+    return res.status(400).json({message:"Invalid Request" });
+  }
   const token = req.headers.authorization.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: "Token not found" });
@@ -63,7 +66,10 @@ app.post("/user/create", (req, res) => {
    }
 
   users.push(user);
-  return res.status(201).json(user);
+  // Generate token and save to user
+  const token = generateToken(user);
+  user.token = token;
+  return res.json({ token });
 });
 
 // Login for existing user
@@ -85,14 +91,18 @@ app.post("/user/login", (req, res) => {
 });
 
 // Create a new item
-app.post("/item/create", authenticate, (req, res) => {
-  const { name } = req.body;
+app.post("/item/create", (req, res) => {
+  const { name, url, price } = req.body;
   if (!name) {
     return res.status(400).json({ message: "Missing required fields" });
   }
+
+  // had to add url and price because otherwise the app would look too boring, and what ecomm item does not have price or image!!
   const item = {
     id: items.length + 1,
     name,
+    url,
+    price,
     created_at: new Date(),
   };
   items.push(item);
@@ -170,6 +180,10 @@ app.delete("/cart/delete", authenticate, (req, res) => {
 
     // Remove item from cart
     cartItems.splice(itemIndex, 1);
+
+    if(cartItems.length<1){
+      user.cart_id=null;
+    }
     res.json({ message: "Item deleted from cart" });
   } else {
     res.status(401).send("Unauthorized");
@@ -181,8 +195,14 @@ app.post("/cart/:cartId/complete", (req, res) => {
   const cart_id = parseInt(req.params.cartId);
   const token = req.headers.authorization.split(" ")[1];
   const user = Object.values(users).find((u) => u.token === token);
+
+  const cart = carts.find((c)=>c.id===user.cart_id);
+  const userCartItems = cartItems.filter(ci => ci.cart_id === cart.id);
+  const itemsInCart = userCartItems.map(ci => items.find(item => item.id === ci.item_id));
+
+  console.log(itemsInCart);
   
-  if (user && user.cart_id === cart_id) {
+  if (user && user.cart_id === cart_id && itemsInCart.length>0) {
     // Mark cart as purchased
     const cart = carts[cart_id-1];
     cart.is_purchased = true;
@@ -249,9 +269,9 @@ app.get("/orders/list",authenticate, (req,res)=>{
 })
 
   // start the server
-  const port = 3000;
+  const PORT = process.env.PORT || 3000;
 // Start the server
-app.listen(port, () => {
-  console.log(`Server started on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });
 

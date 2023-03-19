@@ -1,0 +1,22 @@
+{
+  "name": "backendforjsprojects",
+  "version": "1.0.0",
+  "description": "backend for ecomm app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "backend",
+    "ecomm",
+    "app"
+  ],
+  "author": "Ankush",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "nodemon": "^2.0.21"
+  }
+}

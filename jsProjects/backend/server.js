@@ -4,7 +4,6 @@ const userRouter = require("./routers/userRouter.js");
 const cartRouter = require("./routers/cartRouter.js");
 const itemRouter = require("./routers/itemRouter.js");
 const orderRouter = require("./routers/orderRouter.js");
-const {authenticate,generateToken} = require("./utils");
 
 const app = express();
 // Middleware to parse request bodies

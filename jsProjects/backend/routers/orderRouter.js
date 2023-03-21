@@ -6,7 +6,7 @@ const {orders} = require("../models/models.js");
 const orderRouter = express.Router()
 
 //list all orders 
-orderRouter.get("/list",authenticate,expressAsyncHandler(async (req,res)=>{
+orderRouter.post("/list",authenticate,expressAsyncHandler(async (req,res)=>{
   const user = req.user;
   const order = orders.filter((o)=>o.user_id===user.id);
   if (!order) {

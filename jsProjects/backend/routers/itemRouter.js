@@ -9,6 +9,19 @@ itemRouter.get("/list", expressAsyncHandler(async(req, res) => {
     res.status(200).send(items);
   }));
 
+// list items based on slug
+  itemRouter.get("/list/:slug", expressAsyncHandler(async(req, res) => {
+
+    const item = items.find((x)=>x.id==req.params.slug);
+
+    if(item) {
+      res.status(200).send(item);
+      return;
+    }
+    res.status(404).send({ message: 'Product Not Found' });
+    return;
+  }));
+
 
 
   // Create a new item

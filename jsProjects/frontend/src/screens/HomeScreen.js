@@ -1,14 +1,21 @@
-import { useEffect, useReducer } from 'react';
+import { useContext, useEffect, useReducer } from 'react';
 import logger from 'use-reducer-logger';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import axios from 'axios';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
+import { Helmet } from 'react-helmet-async';
 import Product from '../components/Product';
+import { Store } from '../Store';
 
 function HomeScreen() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { userInfo } = state;
 
   const reducer= (state, action)=>{
     switch (action.type){
@@ -44,19 +51,19 @@ function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const isFromSignup = location.state?.signedUp;
-    
-    if (!token&& !isFromSignup) {
+    if (!userInfo) {
       navigate("/");
     }
-  }, [navigate,location.state]);
+  }, [navigate, userInfo]);
 
   return (
     <div>
+      <Helmet>
+        <title>Ankush Dukaan</title>
+      </Helmet>
       <h1>Featured Products</h1>
       <div className="products">
-        {loading?(<div>Loading...</div>):error?(<div>{error}</div>):
+        {loading?(<LoadingBox />):error?(<MessageBox>{error}</MessageBox>):
         (<Row>
           {products.map((product) => (
             <Col sm={6} md={4} lg={3} className="mb-3" key={product.id}>

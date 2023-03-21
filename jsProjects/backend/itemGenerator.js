@@ -28,7 +28,7 @@ const items = [
   },
   {
     id: 4,
-    name: "Calm Women's yoga Pants",
+    name: "Women's yoga Pants",
     url: "/images/p4.jpg",
     price: "3600",
     created_at: "2023-03-19T21:21:25.934Z"
@@ -41,6 +41,7 @@ async function postData() {
   for (let item of items) {
     try {
       const response = await axios.post(`http://localhost:${PORT}/item/create`, item);
+      console.log(response)
       console.log(`Item ${item.id} created with response:`, response.data);
     } catch (error) {
       console.error(`Failed to create item ${item.id}`, error.response.data);

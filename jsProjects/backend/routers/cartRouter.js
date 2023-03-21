@@ -54,7 +54,7 @@ cartRouter.post("/add", authenticate, expressAsyncHandler(async(req, res) => {
 
 
 // Delete item from cart
-cartRouter.delete("/delete", authenticate, expressAsyncHandler(async(req, res) => {
+cartRouter.post("/delete", expressAsyncHandler(async(req, res) => {
     const { item_id } = req.body;
     const token = req.headers.authorization.split(" ")[1];
     const user = Object.values(users).find((u) => u.token === token);
@@ -136,7 +136,8 @@ cartRouter.post("/:cartId/complete", expressAsyncHandler(async(req, res) => {
 
 
   // List all cart items
-cartRouter.get("/list", authenticate, expressAsyncHandler(async(req, res) => {
+cartRouter.post("/list", authenticate, expressAsyncHandler(async(req, res) => {
+  
     const user = req.user;
     const cart = carts.find((c)=>c.id===user.cart_id);
     if (!cart) {

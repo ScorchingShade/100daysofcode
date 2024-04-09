@@ -1,6 +1,11 @@
-def print_hi(name):
+def print_hi(name, a, b, operation):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+    switch(operation)
+        case('sum'):
+            print(a+b)
+
+
 
 
 # Press the green button in the gutter to run the script.
